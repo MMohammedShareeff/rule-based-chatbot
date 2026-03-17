@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظام التسجيل الإلكتروني - محاكاة</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #ffffff;
+        margin: 0;
+        color: #333;
+        display: flex;
+        flex-direction: row-reverse;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      #page-container {
+        flex: 1;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .learning-disclaimer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #ccc;
+        font-size: 1.5em;
+        text-align: center;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .ppu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 50px;
+        border-bottom: 1px solid #ddd;
+        font-size: 0.9em;
+        background: white;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+      .logo-section img {
+        height: 40px;
+      }
+
+      nav {
+        background: #4a4a4a;
+        color: white;
+        display: flex;
+        justify-content: center;
+        padding: 5px 0;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        font-size: 0.85em;
+        cursor: pointer;
+      }
+
+      nav a:hover {
+        background: #666;
+      }
+      .active-nav {
+        background: #28a745 !important;
+      }
+
+      #main-content {
+        padding: 40px;
+      }
+      .breadcrumb {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 0.85em;
+        text-align: center;
+        background: white;
+      }
+
+      .schedule-table th {
+        background: #4a0e2e;
+        color: white;
+        padding: 12px;
+      }
+      .schedule-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+
+      #chat-widget {
+        width: 0;
+        height: 100vh;
+        background: white;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        display: none;
+        flex-direction: column;
+        border-right: 1px solid #ddd;
+        transition: width 0.3s ease;
+        position: sticky;
+        top: 0;
+      }
+
+      .chat-open #chat-widget {
+        display: flex;
+        width: 380px;
+      }
+
+      header.chat-header {
+        background: #4a0e2e;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        background: #fdfdfd;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .msg {
+        padding: 10px 14px;
+        border-radius: 12px;
+        max-width: 85%;
+        font-size: 0.95em;
+        line-height: 1.4;
+      }
+      .user {
+        background: #e2e2e2;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-right-radius: 2px;
+      }
+      .bot {
+        background: #28a745;
+        color: white;
+        align-self: flex-end;
+        border-bottom-left-radius: 2px;
+      }
+
+      #quick-replies {
+        padding: 10px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        background: #fdfdfd;
+        border-top: 1px solid #eee;
+      }
+
+      #quick-replies button {
+        background: white;
+        border: 1px solid #4a0e2e;
+        color: #4a0e2e;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      #quick-replies button:hover {
+        background: #4a0e2e;
+        color: white;
+      }
+
+      .input-area {
+        padding: 15px;
+        display: flex;
+        border-top: 1px solid #eee;
+        background: #fff;
+        gap: 8px;
+      }
+      .input-area input {
+        flex: 1;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid #ddd;
+        outline: none;
+      }
+      .input-area button {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: #4a0e2e;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #chat-toggle-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background-color: #28a745;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 2000;
+        transition: all 0.3s ease;
+      }
+
+      /* --- الحل هنا: وضع الزر بجانب الشات المفتوح وليس فوقه --- */
+      .chat-open #chat-toggle-btn {
+        bottom: 20px;
+        right: 395px; /* يظهر بجوار نافذة الـ 380px */
+        background-color: #dc3545;
+      }
+
+      #chat-toggle-btn:hover {
+        transform: scale(1.05);
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page-container">
+      <div class="learning-disclaimer">
+        this is a fake ppu registration website used for learning purposes only
+      </div>
+
+      <div class="ppu-header">
+        <div class="user-info">محمد فتحي محمود شريف (221096) ✉️</div>
+        <div class="logo-section">
+          نظام التسجيل الإلكتروني
+          <img
+            src="https://ppu.edu/p/sites/all/themes/ppu2018/logo.png"
+            alt="PPU"
+          />
+        </div>
+      </div>
+
+      <nav>
+        <a onclick="location.reload()">الرئيسية</a>
+        <a onclick="showSchedule()" id="schedule-link">الجدول الدراسي</a>
+        <a>التقييم الأكاديمي</a>
+        <a>قضايا طلابية</a>
+        <a>الوضع المالي</a>
+      </nav>
+
+      <div id="main-content">
+        <div id="home-view">
+          <div class="breadcrumb">الرئيسية</div>
+          <div
+            style="
+              background: #f8d7da;
+              padding: 20px;
+              text-align: center;
+              border-radius: 5px;
+              color: #721c24;
+              border: 1px solid #f5c6cb;
+            "
+          >
+            قضايا طلابية (لا يوجد طلبات حالية)
+          </div>
+        </div>
+
+        <div id="schedule-view" class="hidden">
+          <div class="breadcrumb">مساقاتي المثبتة</div>
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th>الرقم</th>
+                <th>المساق</th>
+                <th>س.م</th>
+                <th>المبنى</th>
+                <th>الاثنين</th>
+                <th>الأربعاء</th>
+                <th>المدرس</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>5272</td>
+                <td>مبادئ الذكاء الاصطناعي</td>
+                <td>3</td>
+                <td>وادي الهرية C</td>
+                <td>09:30-10:45</td>
+                <td>09:30-10:45</td>
+                <td>علاء الحلواني</td>
+              </tr>
+              <tr>
+                <td>8448</td>
+                <td>معالجة اللغة الطبيعية</td>
+                <td>3</td>
+                <td>وادي الهرية C</td>
+                <td>10:00-10:50 (الأحد)</td>
+                <td>10:00-10:50 (الثلاثاء)</td>
+                <td>ضياء الدين ابو زينة</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="chat-widget">
+      <header class="chat-header">
+        <span>المساعد الذكي</span>
+        <i class="fas fa-robot"></i>
+      </header>
+      <div id="messages">
+        <div class="msg bot">
+          مرحباً محمد! كيف يمكنني مساعدتك في التسجيل اليوم؟
+        </div>
+      </div>
+
+      <div id="quick-replies">
+        <button
+          onclick="sendQuickMessage('ما شرط المعدل للحصول على منحة التفوق؟')"
+        >
+          منحة التفوق
+        </button>
+        <button onclick="sendQuickMessage('التدريب الميداني')">
+          التدريب الميداني
+        </button>
+        <button onclick="sendQuickMessage('متى يسمح بدراسة مساق بديل؟,')">
+          المساق البديل
+        </button>
+        <button onclick="sendQuickMessage('تركيب البيانات')">
+          تركيب البيانات
+        </button>
+      </div>
+
+      <div class="input-area">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="اكتب هنا..."
+          onkeypress="if(event.key === 'Enter') sendMessage()"
+        />
+        <button onclick="sendMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="chat-toggle-btn" onclick="toggleChat()">
+      <i id="chat-icon" class="fas fa-comment-dots"></i>
+    </div>
+
+    <script>
+      function toggleChat() {
+        const body = document.body;
+        const chat = document.getElementById("chat-widget");
+        const icon = document.getElementById("chat-icon");
+
+        if (body.classList.contains("chat-open")) {
+          body.classList.remove("chat-open");
+          chat.style.display = "none";
+          icon.className = "fas fa-comment-dots";
+        } else {
+          body.classList.add("chat-open");
+          chat.style.display = "flex";
+          icon.className = "fas fa-times";
+        }
+      }
+
+      function showSchedule() {
+        document.getElementById("home-view").classList.add("hidden");
+        document.getElementById("schedule-view").classList.remove("hidden");
+        const links = document.querySelectorAll("nav a");
+        links.forEach((link) => link.classList.remove("active-nav"));
+        document.getElementById("schedule-link").classList.add("active-nav");
+      }
+
+      function sendQuickMessage(text) {
+        const input = document.getElementById("user-input");
+        input.value = text;
+        sendMessage();
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("user-input");
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        const messagesDiv = document.getElementById("messages");
+        messagesDiv.innerHTML += `<div class="msg user">${msg}</div>`;
+        input.value = "";
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        try {
+          const response = await fetch("/get_response", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ msg: msg }),
+          });
+
+          const data = await response.json();
+          messagesDiv.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+        } catch (err) {
+          console.error("Error:", err);
+          messagesDiv.innerHTML += `<div class="msg bot" style="background:#f8d7da; color:#721c24;">عذراً، فشل الاتصال بالخادم.</div>`;
+        }
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
